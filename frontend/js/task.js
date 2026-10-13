@@ -215,9 +215,6 @@ if (window.runtime) {
     updateInfo = data;
     showUpdateModal(data);
   });
-  window.runtime.EventsOn('update-progress', function(progress, downloaded, total) {
-    updateDownloadProgress(progress, downloaded, total);
-  });
 }
 
 function showUpdateModal(data) {
