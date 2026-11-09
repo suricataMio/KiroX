@@ -1,6 +1,7 @@
 package http
 
 import (
+	crand "crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
@@ -63,8 +64,11 @@ func VisitorID() string {
 // PKCE 生成 PKCE code_verifier 和 code_challenge
 func PKCE() (verifier, challenge string) {
 	raw := make([]byte, 32)
-	for i := range raw {
-		raw[i] = byte(rand.Intn(256))
+	// PKCE verifiers must use a cryptographically secure random source.
+	// If the system source is unavailable, return empty values rather than
+	// silently emitting a predictable verifier.
+	if _, err := crand.Read(raw); err != nil {
+		return "", ""
 	}
 	verifier = base64.RawURLEncoding.EncodeToString(raw)
 	h := sha256.Sum256([]byte(verifier))
